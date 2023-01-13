@@ -31,14 +31,14 @@
             <!--colonne 2-->
             <div class="container">
                 <div class="d-flex flex-column justify-content-center col m-2">
-                    <h2>En attente</h2>
+                    <h2>En Attente</h2>
                     <div class="d-flex flex-row justify-content-center m-1">
                         <input id="inputAjoutTacheEnAttente" class="saisieInputEnAttente w-100" type="text"
                             name="tacheEnAttente" placeholder="tache" [(ngModel)]="nouvTacheEnAttente.titre">
                         <button id="buttonAjoutTache" (click)="ajouterEnAttente()" class="btn btn-primary"
                             value="Ajouter">Ajouter</button>
                     </div>
-
+                    <!--drag and drop-->
                     <div class="listeTaches" cdkDropList [cdkDropListData]="tachesEnAttente" (cdkDropListDropped)="drop($event)">
                         <div cdkDrag [cdkDragData]="tache" *ngFor="let tache of tachesEnAttente" class="tachesBox">    
                         <input type="checkbox" (click)="modifier(tache)" [(ngModel)]="tache.termine">
@@ -52,14 +52,14 @@
             <!--colonne 3-->
             <div class="container">
                 <div class="d-flex flex-column justify-content-center col m-2">
-                    <h2>En cours</h2>
+                    <h2>En Cours</h2>
                     <div class="d-flex flex-row justify-content-center m-1">
                         <input id="inputAjoutTacheEnCours" class="saisieInputEnCours w-100" type="text" name="tacheEnCours"
                             placeholder="tache" [(ngModel)]="nouvTacheEnCours.titre">
                         <button id="buttonAjoutTache" (click)="ajouterEnCours()" class="btn btn-primary"
                             value="Ajouter">Ajouter</button>
                     </div>
-
+                    <!--drag and drop-->
                     <div class="listeTaches" cdkDropList [cdkDropListData]="tachesEnCours" (cdkDropListDropped)="drop($event)">
                         <div cdkDrag [cdkDragData]="tache" *ngFor="let tache of tachesEnCours" class="tachesBox">
                             <input type="checkbox" (click)="modifier(tache)" [(ngModel)]="tache.termine">
@@ -73,14 +73,14 @@
             <!--colonne 4-->
             <div class="container">
                 <div class="d-flex flex-column justify-content-center col m-2">
-                    <h2>Termine</h2>
+                    <h2>Terminé</h2>
                     <div class="d-flex flex-row justify-content-center m-1">
                         <input id="inputAjoutTacheTermine" class="saisieInputTermine w-100" type="text" name="tacheTermine"
                             placeholder="tache" [(ngModel)]="nouvTacheTermine.titre">
                         <button id="buttonAjoutTache" (click)="ajouterTermine()" class="btn btn-primary"
                             value="Ajouter">Ajouter</button>
                     </div>
-
+                    <!--drag and drop-->
                     <div class="listeTaches" cdkDropList [cdkDropListData]="tachesTermine" (cdkDropListDropped)="drop($event)">
                         <div cdkDrag [cdkDragData]="tache" *ngFor="let tache of tachesTermine" class="tachesBox">
                             <input type="checkbox" (click)="modifier(tache)" [(ngModel)]="tache.termine">

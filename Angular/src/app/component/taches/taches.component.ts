@@ -18,19 +18,19 @@ export class TachesComponent implements OnInit {
   tachesTermine: Array<Tache> = [];
 
   nouvTacheUndefined: Tache = {
-    titre : '',
-    termine : false,
-    statut : "Undefined"
-  };  
+    titre: '',
+    termine: false,
+    statut: "Undefined"
+  };
   nouvTacheEnAttente: Tache = {
     titre: '',
     termine: false,
-    statut: "En attente"
+    statut: "En Attente"
   };
   nouvTacheEnCours: Tache = {
     titre: '',
     termine: false,
-    statut: "En cours"
+    statut: "En Cours"
   };
   nouvTacheTermine: Tache = {
     titre: '',
@@ -41,8 +41,8 @@ export class TachesComponent implements OnInit {
 
   constructor(private tacheService: TachesService,
     private userService: UserService,
-    private router: Router){ }
-  
+    private router: Router) { }
+
   ngOnInit(): void {
     this.tacheService.getTaches().subscribe({
       next: (data: Array<Tache>) => {
@@ -61,13 +61,14 @@ export class TachesComponent implements OnInit {
               this.tachesTermine.push(tache);
               break;
             default:
+              console.log(tache.statut);
               console.log("!!!! switch case init status taches.component.ts !!!!");
               break;
           }
         });
       }
     });
-  }  
+  }
 
   ajouterUndefined() {
     this.tacheService.ajoutTaches(this.nouvTacheUndefined).subscribe({

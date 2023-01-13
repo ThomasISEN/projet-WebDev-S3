@@ -6,22 +6,21 @@ import { Tache } from '../model/tache';
 })
 export class FiltreTachePipe implements PipeTransform {
 
-  transform(value: Array<Tache>, filter:string): Array<Tache> {
+  transform(value: Array<Tache>, filter: string): Array<Tache> {
     if (!value) {
       return value;
     }
-    switch(filter) {
+    switch (filter) {
       case "Undefined":
-          return value.filter(tache => tache.statut == "Undefined");
-        case "En attente":
-          return value.filter(tache => tache.statut == "En attente");
-        case "En cours":
-          return value.filter(tache => tache.statut == "En cours");
-        case "Termine":
-          return value.filter(tache => tache.statut == "Termine");
-        default:
-          return value;
+        return value.filter(tache => tache.statut == "Undefined");
+      case "En Attente":
+        return value.filter(tache => tache.statut == "En Attente");
+      case "En Cours":
+        return value.filter(tache => tache.statut == "En Cours");
+      case "Termine":
+        return value.filter(tache => tache.statut == "Termine");
+      default:
+        return value;
     }
   }
-
 }

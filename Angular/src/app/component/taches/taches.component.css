@@ -1,0 +1,3 @@
+.listeTaches{ /*Pour pouvoir drag les éléments même dquand la liste est vide*/
+    min-height: 10em;
+}
