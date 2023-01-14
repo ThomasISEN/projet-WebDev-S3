@@ -3,7 +3,7 @@ const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const mongodb = require('mongodb');
 const bodyParser = require('body-parser');
-const { tacheGet, tachePost, tacheDelete, tachePut } = require('./tacheController');
+const { tacheGet, tachePost, tacheDelete, tachePut, getListe } = require('./tacheController');
 const { signIn, login, logout, isConnected } = require('./authController');
 const cors = require('cors')
 
