@@ -1,6 +1,7 @@
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Tache } from 'src/app/model/tache';
+import { Tache, Liste } from 'src/app/model/tache';
 import { TachesService } from 'src/app/service/taches.service';
 import { UserService } from 'src/app/service/user.service';
 
@@ -11,114 +12,147 @@ import { UserService } from 'src/app/service/user.service';
 })
 export class TachesComponent implements OnInit {
 
-  tachesUndefined: Array<Tache> = [];
-  tachesEnAttente: Array<Tache> = [];
-  tachesEnCours: Array<Tache> = [];
-  tachesTermine: Array<Tache> = [];
+  titreListe: string = "";
+  startStatuts: Array<string> = [];
+  startListe: Array<Liste> = [];
 
-  newTacheUndefined: Tache = {
-    titre : '',
-    termine : false,
-    statut : "Undefined"
-  };  
-  newTacheEnAttente: Tache = {
-    titre: '',
-    termine: false,
-    statut: "En attente"
-  };
-  newTacheEnCours: Tache = {
-    titre: '',
-    termine: false,
-    statut: "En cours"
-  };
-  newTacheTermine: Tache = {
-    titre: '',
-    termine: false,
-    statut: "Termine"
-  };
+  constructor(private tacheService: TachesService, private router: Router, private userService: UserService) { }
 
-
-  constructor(private tacheService: TachesService,
-    private userService: UserService,
-    private router: Router){ }
-  
-  ngOnInit(): void {
-    this.tacheService.getTaches().subscribe({
-      next: (data: Array<Tache>) => {
-        data.forEach(tache => {
-          switch (tache.statut) {
-            case "Undefined":
-              this.tachesUndefined.push(tache);
-              break;
-            case "En attente":
-              this.tachesEnAttente.push(tache);
-              break;
-            case "En cours":
-              this.tachesEnCours.push(tache);
-              break;
-            case "Termine":
-              this.tachesTermine.push(tache);
-              break;
-            default:
-              console.log("Problème switch case taches.components");
-              break;
+  ngOnInit() {
+    this.tacheService.getTaches().subscribe({ 
+      //récupérer les liste et leurs noms
+      next: (Liste) => {
+        Liste.forEach((tache, index) => {
+        
+          if (index == 0) {
+            this.startStatuts.push(tache.statut);
           }
+          else {
+            let i = 0;
+            this.startStatuts.forEach(statut => { 
+              if (tache.statut == statut) {
+                i++;
+              }
+            });
+            if (i == 0) {
+              this.startStatuts.push(tache.statut);
+            }
+          }
+        });
+
+
+        this.startStatuts.forEach(statut => {
+          // on récupère les taches pour chaque statut
+          let newListe: Liste = { 
+            titreListe: statut,
+            titreTache: "",
+            taches: []
+          }
+
+          this.tacheService.getTaches().subscribe({
+            next: (Liste) => {
+              
+              let ListeFiltre = Liste.filter(tache => tache.statut == statut);
+              newListe.taches = ListeFiltre;
+              this.startListe.push(newListe);
+            }
+          });
         });
       }
     });
-  }  
+  }
 
-  ajouterUndefined() {
-    this.tacheService.ajoutTaches(this.newTacheUndefined).subscribe({
+  ajouterTache(Liste: Liste) {
+    //création des taches quand elles sont ajoutées
+    let newTache: Tache = { 
+      titre: Liste.titreTache,
+      termine: false,
+      statut: Liste.titreListe
+    };
+    this.tacheService.ajoutTaches(newTache).subscribe({
       next: (data) => {
-        this.tachesUndefined.push(data);
-      }
-    });
-  }
-  ajouterEnAttente() {
-    this.tacheService.ajoutTaches(this.newTacheEnAttente).subscribe({
-      next: (data) => {
-        this.tachesEnAttente.push(data);
-      }
-    });
-  }
-  ajouterEnCours() {
-    this.tacheService.ajoutTaches(this.newTacheEnCours).subscribe({
-      next: (data) => {
-        this.tachesEnCours.push(data);
-      }
-    });
-  }
-  ajouterTermine() {
-    this.tacheService.ajoutTaches(this.newTacheTermine).subscribe({
-      next: (data) => {
-        this.tachesTermine.push(data);
+        this.startListe.forEach(liste => {
+          if (liste.titreListe == Liste.titreListe) {
+            liste.taches.push(data);
+          }
+        })
       }
     });
   }
 
-  supprimer(tache: Tache) {
+  supprimerTache(Liste: Liste, tache: Tache) {
+    //Suppression de la tache (quand on appuie sur le bouton, partie html)
     this.tacheService.removeTaches(tache).subscribe({
-      next: (data) => {
-        this.tachesUndefined = this.tachesUndefined.filter(e => tache._id != e._id);
-        this.tachesEnAttente = this.tachesEnAttente.filter(e => tache._id != e._id);
-        this.tachesEnCours = this.tachesEnCours.filter(e => tache._id != e._id);
-        this.tachesTermine = this.tachesTermine.filter(e => tache._id != e._id);
+      next: () => {
+        Liste.taches = Liste.taches.filter(Ltmp => tache._id != Ltmp._id);
       }
     });
   }
 
   modifier(tache: Tache) {
+    //changement du status; terminé ou non
     tache.termine = !tache.termine;
-    this.tacheService.updateTaches(tache).subscribe({
-      next: (data) => {
-      }
-    });
+    this.tacheService.updateTaches(tache).subscribe({});
   }
-
   loggout() {
+    //la déconnexion par le boutton
     this.userService.logout().subscribe(() => {
       this.router.navigate(['']);
     })
   }
+
+  drop(event: CdkDragDrop<Liste>) {
+    //le drop est utilisé pour le transfert entre colonnes des taches
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data.taches, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data.taches,
+        event.container.data.taches,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+    event.item.data.statut = event.container.data.titreListe;
+    this.tacheService.updateTaches(event.item.data).subscribe({});
+    console.log(this.tacheService.updateTaches(event.item.data).subscribe({}))
+    //console.log(event.container)
+  }
+
+  ajouterListe() {
+    let newListe: Liste = {
+      titreListe: "",
+      titreTache: "",
+      taches: []
+    }
+
+    let listeExisteDeja = this.startListe.filter(liste => liste.titreListe == this.titreListe);
+    if (listeExisteDeja.length == 0) { 
+      this.tacheService.getTaches().subscribe({
+        next: (Liste) => {
+          /*let nouvTache: Tache = { 
+            titre: "exemple",
+            termine: false,
+            statut: this.titreListe
+          };*/
+          let ListeFiltre = Liste.filter(tache => tache.statut == this.titreListe);//on ajoute les taches assigné à ce titre dans la liste 
+          newListe.taches = ListeFiltre;
+          newListe.titreListe = this.titreListe;
+          if (ListeFiltre.length == 0) { 
+            this.startListe.push(newListe);
+      
+          }
+        }
+      });
+      
+    }
+  }
+
+  supprimerListe(Liste: Liste) {
+    Liste.taches.forEach((tache: Tache) => {
+      this.tacheService.removeTaches(tache).subscribe({});
+    });
+    this.startListe = this.startListe.filter(liste => liste.titreListe != Liste.titreListe);
+  }
+
 }

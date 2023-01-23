@@ -1,0 +1,9 @@
+.liste{ /*Pour pouvoir drag les éléments même dquand la liste est vide*/
+    min-height: 10em;
+}
+.container{
+   text-align: center;
+   word-wrap:break-word;
+   max-width: 15rem;
+    min-width: 10rem;
+}
