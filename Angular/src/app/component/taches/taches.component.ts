@@ -20,7 +20,7 @@ export class TachesComponent implements OnInit {
 
   ngOnInit() {
     this.tacheService.getTaches().subscribe({ 
-      //récupérer les taches et leurs status
+      //récupérer les liste et leurs noms
       next: (Liste) => {
         Liste.forEach((tache, index) => {
         
@@ -52,8 +52,8 @@ export class TachesComponent implements OnInit {
           this.tacheService.getTaches().subscribe({
             next: (Liste) => {
               
-              let ListeFiltred = Liste.filter(tache => tache.statut == statut);
-              newListe.taches = ListeFiltred;
+              let ListeFiltre = Liste.filter(tache => tache.statut == statut);
+              newListe.taches = ListeFiltre;
               this.startListe.push(newListe);
             }
           });
@@ -101,20 +101,22 @@ export class TachesComponent implements OnInit {
     })
   }
 
-  drop(event: CdkDragDrop<Array<Tache>>) {
+  drop(event: CdkDragDrop<Liste>) {
     //le drop est utilisé pour le transfert entre colonnes des taches
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(event.container.data.taches, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
+        event.previousContainer.data.taches,
+        event.container.data.taches,
         event.previousIndex,
         event.currentIndex,
       );
     }
-    event.item.data.statut = event.container.data[0].statut;
+    event.item.data.statut = event.container.data.titreListe;
     this.tacheService.updateTaches(event.item.data).subscribe({});
+    console.log(this.tacheService.updateTaches(event.item.data).subscribe({}))
+    //console.log(event.container)
   }
 
   ajouterListe() {
@@ -125,23 +127,24 @@ export class TachesComponent implements OnInit {
     }
 
     let listeExisteDeja = this.startListe.filter(liste => liste.titreListe == this.titreListe);
-    if (listeExisteDeja.length == 0) { //on regarde si la liste qu'on veut créer n'existe pas déjà 
+    if (listeExisteDeja.length == 0) { 
       this.tacheService.getTaches().subscribe({
         next: (Liste) => {
-          let nouvTache: Tache = { 
+          /*let nouvTache: Tache = { 
             titre: "exemple",
             termine: false,
             statut: this.titreListe
-          };
-          let ListeFiltred = Liste.filter(tache => tache.statut == this.titreListe);//on ajoute les taches assigné à ce titre dans la liste 
-          newListe.taches = [nouvTache];
+          };*/
+          let ListeFiltre = Liste.filter(tache => tache.statut == this.titreListe);//on ajoute les taches assigné à ce titre dans la liste 
+          newListe.taches = ListeFiltre;
           newListe.titreListe = this.titreListe;
-          if (ListeFiltred.length == 0) { //
+          if (ListeFiltre.length == 0) { 
             this.startListe.push(newListe);
       
           }
         }
       });
+      
     }
   }
 

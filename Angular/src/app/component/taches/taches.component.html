@@ -26,7 +26,7 @@
                     <button id="buttonAjoutTache" (click)="ajouterTache(liste)" class="btn btn-primary" value="Ajouter">Ajouter</button>
                 </div>
                 <!--affichage des taches/leurs états/boutton pour suppr-->
-                <div class="liste " cdkDropList [cdkDropListData]="liste.taches" (cdkDropListDropped)="drop($event)">
+                <div class="liste " cdkDropList [cdkDropListData]="liste" (cdkDropListDropped)="drop($event)">
                     <div cdkDrag [cdkDragData]="tache" *ngFor="let tache of liste.taches" class="tachesBox">
                         <div [ngClass]="tache.termine? 'text-decoration-line-through' : '' ">{{tache.titre}}</div>
                         <input type="checkbox" (click)="modifier(tache)" [(ngModel)]="tache.termine">

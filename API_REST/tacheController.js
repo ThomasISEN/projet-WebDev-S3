@@ -3,7 +3,7 @@ const MongoClient = mongodb.MongoClient;
 const url = "mongodb://127.0.0.1:27017/";
 
 exports.tacheGet = async function(req, res) {
-    try {
+    try { 
         db = await MongoClient.connect(url);
         let dbo = db.db("taches");
         let datas = await dbo.collection("taches").find({}).toArray();
@@ -43,7 +43,7 @@ exports.tachePut = async function(req, res, next) {
     try {
         db = await MongoClient.connect(url);
         let dbo = db.db("taches");
-        await dbo.collection("taches").updateOne({ _id: new mongodb.ObjectId(req.params.id) }, { $set: { titre: req.body.titre, termine: req.body.termine } });
+        await dbo.collection("taches").updateOne({ _id: new mongodb.ObjectId(req.params.id) }, { $set: { titre: req.body.titre, termine: req.body.termine, statut: req.body.statut } });
         res.status(200).send();
     } catch (err) {
         console.log(err);
